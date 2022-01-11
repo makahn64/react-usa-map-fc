@@ -1,6 +1,6 @@
 {
     "name": "react-usa-map-fc",
-    "version": "2.1.1",
+    "version": "2.1.2",
     "description": "React functional component with all USA States with customizable options.",
     "license": "MIT",
     "repository": {
