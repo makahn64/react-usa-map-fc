@@ -1,6 +1,8 @@
 # react-usa-map | A simple SVG USA map rendering on React
 
-[![Build Status](https://travis-ci.org/gabidavila/react-usa-map.svg?branch=master)](https://travis-ci.org/gabidavila/react-usa-map) [![codebeat badge](https://codebeat.co/badges/edd62a75-c313-47c7-b239-d1d1848d3621)](https://codebeat.co/projects/github-com-gabidavila-react-usa-map-master)
+_NOTE: This is based on Gabi Davila's original implementation in class-based React Javascript. I've converted it to
+a functional component and used Typescript. I've kept some of the original documentation._
+
 
 This is an alternate version for you that just want a simple customizable map on HTML. This maps shows states delimitations including DC, Alaska, and Hawaii. D3 is not needed.
 

@@ -1,4 +1,7 @@
-Copyright (c) 2017 Gabriela D'Ávila Ferrara
+
+Copyright (c) 2022 Mitch Kahn
+
+Based on original work: Copyright (c) 2017 Gabriela D'Ávila Ferrara
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
