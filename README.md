@@ -1,119 +1,123 @@
-# react-usa-map | A simple SVG USA map rendering on React
+# react-usa-map-fc | A simple SVG USA map rendering on React
 
 _NOTE: This is based on Gabi Davila's original implementation in class-based React Javascript. I've converted it to
 a functional component and used Typescript. I've kept some of the original documentation._
 
-
-This is an alternate version for you that just want a simple customizable map on HTML. This maps shows states delimitations including DC, Alaska, and Hawaii. D3 is not needed.
-
-It uses the [Albers projection](https://en.wikipedia.org/wiki/Albers_projection).
-
-## [Live Example](http://react-usa-map-demo.herokuapp.com)
-Live: [http://react-usa-map-demo.herokuapp.com](http://react-usa-map-demo.herokuapp.com)
-
-Code: [http://github.com/gabidavila/react-usa-map-demo](http://github.com/gabidavila/react-usa-map-demo)
+Original: https://github.com/gabidavila/react-usa-map
 
 ## Installation
 
 It requires `react` 16.13.1 or higher. Run:
 
-`yarn add react-usa-map`
+`yarn add react-usa-map-fc`
 
 or
 
-`npm install react-usa-map --save`
+`npm install react-usa-map-fc --save`
+
+## Differences from Original Component
+1. Written in Typescript as functional component.
+2. Removed _required_ onClick handler.
+3. Added `onClick` and `onClickEvent` props that give you either the full event, or just the state abbreviation.
+4. Corresponding `onMouseOver` and `onMouseOverEvent` handlers added (optional as well).
+5. Removed per-state handlers in the `customize` object. Didn't see a strong use case.
+6. Default export removed.
 
 ## Usage
 
-The below example shows the mandatory `onClick` event.
 
 ```javascript
-import React, { Component } from 'react';
-import USAMap from "react-usa-map";
+import React, { useState } from 'react';
+import {Container, Row, Col, Alert } from 'react-bootstrap';
+import {MapCustomizationOptionMap, USAMap} from 'react-usa-map-fc';
 
-class App extends Component {
-  /* mandatory */
-  mapHandler = (event) => {
-    alert(event.target.dataset.name);
-  };
+function App() {
 
-  render() {
-    return (
-      <div className="App">
-        <USAMap onClick={this.mapHandler} />
-      </div>
-    );
+  const [ customize, setCustomize ] = useState<MapCustomizationOptionMap>({});
+
+  const mapClickHandler = (state: string) => {
+    console.log(`clicked ${state}`);
+    setCustomize({ ...customize, [state]: { fill: '#00ff00'}});
   }
+
+  const mapFlyoverHandler = (state: string) => {
+    console.log(`mouse entered ${state}`);
+    setCustomize({ ...customize, [state]: { fill: '#0095ff'}});
+  }
+
+  const mapClickEventHandler = (event: React.MouseEvent<SVGPathElement>) => {
+    // if some typings whiz knows a better way, lemme know!
+    const dataset = (event.target as SVGPathElement).dataset as MapMouseEventDataset;
+    console.log(dataset);
+  }
+
+  return (
+    <Container>
+      <Row className="mt-5">
+        <Col/>
+        <Col lg={8}>
+          <Alert variant="info">react-usa-map-fc</Alert>
+          <div>
+            <USAMap
+              onClick={mapClickHandler}
+              onClickEvent={mapClickEventHandler}
+              onMouseOver={mapFlyoverHandler}
+              customize={customize}
+              width={800}/>
+          </div>
+        </Col>
+        <Col/>
+      </Row>
+    </Container>
+  );
 }
 
 export default App;
 ```
 
-Example with optional props, `App.js`:
 
-```javascript
-import React, { Component } from 'react';
-import './App.css'; /* optional for styling like the :hover pseudo-class */
-import USAMap from "react-usa-map";
+## Props
 
-class App extends Component {
-  /* mandatory */
-  mapHandler = (event) => {
-    alert(event.target.dataset.name);
-  };
+|prop|description|required|default|
+|----|-----------|--------|-------|
+|`title`| Content for the Title attribute on the map `svg`| No | 'USA Map' |
+|`width`| The `width` for rendering, numeric, no `px` suffix| No | 960 |
+|`height`| The `height` for rendering, numeric, no `px` suffix| No | 600 |
+|`defaultFill`| The default color for filling. | No |'#d3d3d3' |
+|`customize`| Optional customization map for state fill colors. See below.  | No | undefined |
+|`onClick` | Callback for clicking on a state. `(stateAbbreviation: string) => void`. This callback gives you just the abbreviation as a string. | No | undefined |
+|`onClickEvent` | Event callback for clicking on a state. `(event:  MouseEvent<SVGPathElement>) => void`. Returns the full event. See example code below for unpacking. | No | undefined |
+|`onMouseOver` | Same signature as `onClick` above. | No | undefined |
+|`onMouseOverEvent` | Same signature as `onClickEvent` | No | undefined |
 
-  /* optional customization of filling per state and calling custom callbacks per state */
-  statesCustomConfig = () => {
-    return {
-      "NJ": {
-        fill: "navy",
-        clickHandler: (event) => console.log('Custom handler for NJ', event.target.dataset)
-      },
-      "NY": {
-        fill: "#CC0000"
-      }
-    };
-  };
-
-  render() {
-    return (
-      <div className="App">
-        <USAMap customize={this.statesCustomConfig()} onClick={this.mapHandler} />
-      </div>
-    );
-  }
+As type defintions:
+```typescript
+export type MapCustomizationOption = {
+  fill?: string;
 }
 
-export default App;
-```
+export type MapCustomizationOptionMap = Record<string, MapCustomizationOption>;
 
-`App.css`:
-
-```css
-path {
-  pointer-events: all;
-}
-path:hover {
-  opacity: 0.50;
-  cursor: pointer;
+type MapProps = {
+  onClick?: (stateAbbrev: string) => void;
+  onClickEvent?: (event: MouseEvent<SVGPathElement>) => void;
+  onMouseOver?: (stateAbbrev: string) => void;
+  onMouseOverEvent?: (event: MouseEvent<SVGPathElement>) => void;
+  width?: number;
+  height?: number;
+  title?: string;
+  defaultFill?: string;
+  customize?: MapCustomizationOptionMap;
 }
 ```
 
-## All optional props:
+## Per State Fill Customization
 
-|prop|description|
-|----|-----------|
-|`title`| Content for the Title attribute on the `svg`|
-|`width`| The `width` for rendering, numeric, no `px` suffix|
-|`height`| The `height` for rendering, numeric, no `px` suffix|
-|`defaultFill`| The default color for filling|
-|`customize`| Optional customization of filling per state |
+To customize the fill for a state, add an entry in the `customize` map like so:
 
-Additionally each `path` tag has an abbreviation of the current state followed by a `state` class:
+`const customizedStates = { 'CA': { fill: '#00ff00' }, 'NJ': { fill: '#a0c3d4} };`
 
-```html
-<path fill="#{custom color or #D3D3D3}" data-name="CA" class="CA state" d="...{polygon dimensions here}..."></path>
-```
+Type definition is above.
 
 # License
 
@@ -121,12 +125,13 @@ Additionally each `path` tag has an abbreviation of the current state followed b
 
 # Sources
 
-The map is sourced from [Wikimedia](https://commons.wikimedia.org/wiki/File:Blank_US_Map_(states_only).svg) and is under [Creative Commons Attribution-Share Alike 3.0 Unported](https://spdx.org/licenses/CC-BY-SA-3.0.html) license. This package is inspired on the [react-us-state-map](https://npmjs.com/package/react-us-state-map) package, in fact the initial SVG class system is based on it.
+The map is sourced from [Wikimedia](https://commons.wikimedia.org/wiki/File:Blank_US_Map_(states_only).svg) and is under 
+[Creative Commons Attribution-Share Alike 3.0 Unported](https://spdx.org/licenses/CC-BY-SA-3.0.html) license. This package is inspired on the [react-us-state-map](https://npmjs.com/package/react-us-state-map) package, in fact the initial SVG class system is based on it.
 
 # Contributing
 
-Fork and PR. Not much fuss, I will be try to be as responsive as possible.
+Fork and PR. Then lemme know.
 
 # Maintainer
 
-Package maintaned by Gabriela D'Ávila Ferrara, [website](http://gabriela.io).
+Package maintained by Mitch Kahn, [website](https://github.com/makahn64).
