@@ -10,7 +10,7 @@ export type MapCustomizationOption = {
   fill?: string;
 }
 
-export type MapCustomizationOptionMap = Record<string, MapCustomizationOption>;
+export type MapCustomizations = Record<string, MapCustomizationOption>;
 
 type MapProps = {
   onClick?: (stateAbbrev: string) => void;
@@ -21,7 +21,7 @@ type MapProps = {
   height?: number;
   title?: string;
   defaultFill?: string;
-  customize?: MapCustomizationOptionMap;
+  customize?: MapCustomizations;
 }
 
 export const USAMap: FC<MapProps> = ({

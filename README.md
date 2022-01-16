@@ -29,11 +29,11 @@ or
 ```javascript
 import React, { useState } from 'react';
 import {Container, Row, Col, Alert } from 'react-bootstrap';
-import {MapCustomizationOptionMap, USAMap} from 'react-usa-map-fc';
+import {MapCustomizations, USAMap} from 'react-usa-map-fc';
 
 function App() {
 
-  const [ customize, setCustomize ] = useState<MapCustomizationOptionMap>({});
+  const [ customize, setCustomize ] = useState<MapCustomizations>({});
 
   const mapClickHandler = (state: string) => {
     console.log(`clicked ${state}`);
@@ -96,7 +96,7 @@ export type MapCustomizationOption = {
   fill?: string;
 }
 
-export type MapCustomizationOptionMap = Record<string, MapCustomizationOption>;
+export type MapCustomizations = Record<string, MapCustomizationOption>;
 
 type MapProps = {
   onClick?: (stateAbbrev: string) => void;
@@ -107,7 +107,7 @@ type MapProps = {
   height?: number;
   title?: string;
   defaultFill?: string;
-  customize?: MapCustomizationOptionMap;
+  customize?: MapCustomizations;
 }
 ```
 
